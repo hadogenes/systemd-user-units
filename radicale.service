@@ -1,0 +1,9 @@
+[Unit]
+Description=Radicale CalDAV and CardDAV server
+After=encfs@radicale.service
+
+[Service]
+ExecStart=/usr/bin/radicale --foreground
+
+[Install]
+WantedBy=default.target

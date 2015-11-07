@@ -1,0 +1,19 @@
+[Unit]
+Description=MariaDB 10.0 database server
+
+[Service]
+Environment=DB_USER=root
+Environment=DB_DIR=%h/.local/share/mariadb
+
+ExecStartPre=/bin/sh -c "test -d ${DB_DIR} || (mkdir -p ${DB_DIR}; /usr/bin/mysql_install_db --no-defaults --datadir=${DB_DIR})"
+ExecStartPre=/bin/mkdir -p %t/mariadb
+ExecStart=/usr/sbin/mysqld --no-defaults --skip-networking --datadir=${DB_DIR} --socket=%t/mariadb/socket --pid-file=%t/mariadb/pid
+ExecStartPost=/bin/sh -c "while sleep 1; do mysqladmin --no-defaults --socket=%t/mariadb/socket --user=${DB_USER} ping > /dev/null 2>&1 && break; done"
+
+ExecStopPost=/bin/rmdir %t/mariadb
+
+# Give a reasonable amount of time for the server to start up/shut down
+TimeoutSec=300
+
+[Install]
+WantedBy=default.target

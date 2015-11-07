@@ -1,0 +1,16 @@
+[Unit]
+Description=Akonadi dir to ram (resync)
+PartOf=ram-akonadi.service
+After=ram-akonadi.service
+Wants=ram-akonadi-resync.timer
+
+[Service]
+Type=oneshot
+Environment=HOME_AKONADI_DIR=%h/.local/share/akonadi
+Environment=RAM_AKONADI_DIR=%t/akonadi
+
+ExecStart=/bin/tar -cf ${HOME_AKONADI_DIR}.tar.lz4.new -I lz4 -C ${RAM_AKONADI_DIR} .
+ExecStartPost=/bin/mv ${HOME_AKONADI_DIR}.tar.lz4.new ${HOME_AKONADI_DIR}.tar.lz4
+
+[Install]
+WantedBy=cache.target

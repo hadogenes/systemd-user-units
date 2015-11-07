@@ -1,0 +1,23 @@
+[Unit]
+Description=Mozilla config dir to ram for user %u
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Environment=HOME_CONFIG_DIR=%h/.mozilla
+Environment=RAM_DIR=%t/mozilla
+
+ExecStartPre=/bin/sh -c "test -d ${HOME_CONFIG_DIR} || (rm -f ${HOME_CONFIG_DIR} ; mv ${HOME_CONFIG_DIR}.bak ${HOME_CONFIG_DIR})"
+ExecStartPre=-/bin/mkdir ${RAM_DIR}
+ExecStartPre=/bin/mv ${HOME_CONFIG_DIR} ${HOME_CONFIG_DIR}.bak
+
+ExecStart=/bin/ln -s ${RAM_DIR}/config ${HOME_CONFIG_DIR} ; /bin/cp -a ${HOME_CONFIG_DIR}.bak ${RAM_DIR}/config
+
+ExecStop=/usr/bin/rsync --delete -rl ${RAM_DIR}/config/ ${HOME_CONFIG_DIR}.bak
+ExecStopPost=/usr/bin/unlink ${HOME_CONFIG_DIR}
+ExecStopPost=/bin/mv ${HOME_CONFIG_DIR}.bak ${HOME_CONFIG_DIR}
+ExecStopPost=/bin/rm -r ${RAM_DIR}/config
+ExecStopPost=-/bin/rmdir ${RAM_DIR}
+
+[Install]
+WantedBy=cache.target

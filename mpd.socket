@@ -1,0 +1,12 @@
+[Unit]
+Description=Music Player Daemon socket for %u
+
+[Socket]
+ListenStream=%t/mpd/socket
+#ListenStream=127.0.0.1:6600
+
+ExecStartPre=/bin/ln -Tfs %t/mpd %h/.cache/mpd
+ExecStopPost=/usr/bin/unlink %h/.cache/mpd
+
+[Install]
+WantedBy=sockets.target

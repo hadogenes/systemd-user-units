@@ -1,0 +1,20 @@
+[Unit]
+Description=Cache dir to ram
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Environment=HOME_CACHE_DIR=%h/.cache
+Environment=RAM_CACHE_DIR=%t/cache
+
+ExecStartPre=-/usr/bin/unlink ${HOME_CACHE_DIR}
+ExecStartPre=-/bin/mv ${HOME_CACHE_DIR}.bak ${HOME_CACHE_DIR}
+ExecStart=/bin/cp -a ${HOME_CACHE_DIR} ${RAM_CACHE_DIR}
+ExecStartPost=/bin/mv ${HOME_CACHE_DIR} ${HOME_CACHE_DIR}.bak
+ExecStartPost=/bin/ln -s ${RAM_CACHE_DIR} ${HOME_CACHE_DIR}
+
+ExecStop=/usr/bin/unlink ${HOME_CACHE_DIR} ; /bin/mv ${RAM_CACHE_DIR} ${HOME_CACHE_DIR}
+ExecStopPost=/bin/rm -fr ${HOME_CACHE_DIR}.bak
+
+[Install]
+WantedBy=cache.target

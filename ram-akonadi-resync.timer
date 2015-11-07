@@ -1,0 +1,6 @@
+[Unit]
+Description=Akonadi dir to ram (resync) - timer 1h
+PartOf=ram-akonadi.service ram-akonadi-resync.service
+
+[Timer]
+OnUnitActiveSec=1h

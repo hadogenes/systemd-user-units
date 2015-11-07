@@ -1,0 +1,12 @@
+[Unit]
+Description=Encfs for %I
+
+[Service]
+EnvironmentFile=%h/.config/encfs/%I
+
+ExecStart=/usr/bin/encfs -f --extpass="/usr/bin/ssh-askpass encfs_%I" %h/${ENCRYPTED_PATH} %h/${UNENCRYPTED_PATH} ${OPTIONS}
+ExecStop=/bin/fusermount -u %h/${UNENCRYPTED_PATH}
+
+[Install]
+WantedBy=default.target
+

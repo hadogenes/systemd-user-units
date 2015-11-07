@@ -1,0 +1,21 @@
+[Unit]
+Description=Akonadi dir to ram
+Before=akonadi.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Environment=HOME_AKONADI_DIR=%h/.local/share/akonadi
+Environment=RAM_AKONADI_DIR=%t/akonadi
+
+ExecStartPre=-/usr/bin/unlink ${HOME_AKONADI_DIR}
+ExecStartPre=-/bin/mv ${HOME_AKONADI_DIR}.bak ${HOME_AKONADI_DIR}
+ExecStart=/bin/cp -a ${HOME_AKONADI_DIR} ${RAM_AKONADI_DIR}
+ExecStartPost=/bin/mv ${HOME_AKONADI_DIR} ${HOME_AKONADI_DIR}.bak
+ExecStartPost=/bin/ln -s ${RAM_AKONADI_DIR} ${HOME_AKONADI_DIR}
+
+ExecStop=/usr/bin/unlink ${HOME_AKONADI_DIR} ; /bin/mv ${RAM_AKONADI_DIR} ${HOME_AKONADI_DIR}
+ExecStopPost=/bin/rm -fr ${HOME_AKONADI_DIR}.bak
+
+[Install]
+WantedBy=cache.target

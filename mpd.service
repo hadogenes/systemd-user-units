@@ -1,0 +1,10 @@
+[Unit]
+Description=Music Player Daemon for %u
+After=cache.target audio.target
+
+[Service]
+ExecStart=/usr/bin/mpd --stdout --no-daemon
+
+[Install]
+Also=mpd.socket
+WantedBy=default.target

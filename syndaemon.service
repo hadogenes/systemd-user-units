@@ -1,0 +1,8 @@
+[Unit]
+Description=Monitor keyboard to disable the touchpad
+
+[Service]
+ExecStart=/usr/bin/syndaemon -k -t
+
+[Install]
+WantedBy=x11.target
