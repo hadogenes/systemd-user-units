@@ -1,0 +1,13 @@
+[Unit]
+Description=GnuPG private key agent
+IgnoreOnIsolate=true
+
+[Service]
+Type=forking
+Environment=GPG_ENVFILE=%t/gpg-agent.env
+ExecStart=/usr/bin/gpg-agent --daemon --write-env-file ${GPG_ENVFILE}
+ExecStopPost=/bin/rm -f ${GPG_ENVFILE}
+Restart=on-abort
+
+[Install]
+WantedBy=default.target
